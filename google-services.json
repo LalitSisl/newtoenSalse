@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "828139508295",
+    "project_id": "viewsight-97387",
+    "storage_bucket": "viewsight-97387.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:828139508295:android:840083371c918195879762",
+        "android_client_info": {
+          "package_name": "com.example.salesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "828139508295-fnphcg2svo4dsvgghpbmrp62foflpvv7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOvZCjSEhbF4TmmxQo_ead1AqgLkTcOWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "828139508295-fnphcg2svo4dsvgghpbmrp62foflpvv7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
