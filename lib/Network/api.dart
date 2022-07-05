@@ -45,4 +45,20 @@ class API {
   static final String Ws_Get_SubArea = BASE_URL+"Ws_Get_SubArea";
 
   static final String Ws_Get_ItemCategory = BASE_URL+"Ws_Get_ItemCategory";
+
+  static final String Ws_Save_Sales_Executive_Calls_Details = BASE_URL+"Ws_Save_Sales_Executive_Calls_Details";
+
+  static final String Ws_Stock_Summary = BASE_URL+"Ws_Stock_Summary";
+
+  static final String Ws_Sales_Return_View = BASE_URL+"Ws_Sales_Return_View";
+
+  static final String Ws_FDFM_RetailerDetailsInfo_StaffWise_Details = BASE_URL+"Ws_FDFM_RetailerDetailsInfo_StaffWise_Details";
+
+  static final String Ws_Complaint_Detail_View = BASE_URL+"Ws_Complaint_Detail_View";
+
+  static final String Ws_Secondry_Sale_Dynamic_Report = BASE_URL+"Ws_Secondry_Sale_Dynamic_Report";
+
+  static final String Ws_Events = BASE_URL+"Ws_Events";
+
+  static final String Ws_Event_Summary = BASE_URL+"Ws_Event_Summary";
 }

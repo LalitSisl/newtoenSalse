@@ -3,25 +3,26 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:xml2json/xml2json.dart';
 
-import '../Models/visit_note_model.dart';
+import '../Models/event_detail_model.dart';
 import '../Network/api.dart';
 import '../utils/secure_storage.dart';
 import 'package:http/http.dart' as http;
-class VisitNote extends StatefulWidget {
-  const VisitNote({Key? key}) : super(key: key);
+
+class EventDetailScreen extends StatefulWidget {
+  const EventDetailScreen({Key? key}) : super(key: key);
 
   @override
-  State<VisitNote> createState() => _VisitNoteState();
+  State<EventDetailScreen> createState() => _EventDetailScreenState();
 }
 
-class _VisitNoteState extends State<VisitNote> {
+class _EventDetailScreenState extends State<EventDetailScreen> {
 
   bool isLoading = true;
-  List<VisitNoteModel> visitNoteList = <VisitNoteModel>[];
+  List<EventDetailModel> eventDetailList = <EventDetailModel>[];
 
-  _getVisitNote() async {
+  _getEventDetail() async {
     var staffId = await UserSecureStorage().getStaffId();
-    var res= await http.post(Uri.parse(API.Ws_Secondry_Sale_Dynamic_Report),headers: {
+    var res= await http.post(Uri.parse(API.Ws_Event_Summary),headers: {
       "Accept": "application/json",
       "Content-Type": "application/x-www-form-urlencoded"
     },
@@ -29,8 +30,7 @@ class _VisitNoteState extends State<VisitNote> {
           '_StaffID':"$staffId",
           '_VisitCode':'101',
           '_TenantCode': '01',
-          '_Location': '110001',
-          'ReportType': '09'
+          '_Location': '110001'
         }
     );
 
@@ -49,10 +49,10 @@ class _VisitNoteState extends State<VisitNote> {
       complaintObject = complaintObject.toString().replaceAll("\\r\\\\n", "\n");
       var object = json.decode(complaintObject.toString());
       setState(() {
-        object['Report'].forEach((v) {
-          visitNoteList.add(VisitNoteModel.fromJson(v));
+        object['EventSummary'].forEach((v) {
+          eventDetailList.add(EventDetailModel.fromJson(v));
         });
-        // product = productList[0];
+        // eventType = eventTypeList[0];
         isLoading = false;
       });
     }
@@ -67,7 +67,7 @@ class _VisitNoteState extends State<VisitNote> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getVisitNote();
+    _getEventDetail();
   }
 
   @override
@@ -86,10 +86,11 @@ class _VisitNoteState extends State<VisitNote> {
           ),
         ),
         title: const Text(
-          'Visit Note View',
+          'Complaint View',
           style:
           TextStyle(fontSize: 18, color: Color.fromARGB(255, 20, 20, 20)),
         ),
+
       ),
       body: isLoading?
       SizedBox(
@@ -100,7 +101,7 @@ class _VisitNoteState extends State<VisitNote> {
         ),
       )
           : ListView.builder(
-          itemCount: visitNoteList.isNotEmpty ? visitNoteList.length : 0,
+          itemCount: eventDetailList.isNotEmpty ? eventDetailList.length : 0,
           itemBuilder: (context, index) {
             return Card(
               color: const Color.fromARGB(255, 166, 207, 240),
@@ -116,10 +117,10 @@ class _VisitNoteState extends State<VisitNote> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Visit Type:')),
+                            child: text('Name:')),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: text(visitNoteList[index].visitType != null ? '${visitNoteList[index].visitType}' : '--')),
+                            child: text(eventDetailList[index].name != null ? '${eventDetailList[index].name}' : '--')),
                       ],
                     ),
                     const SizedBox(
@@ -130,10 +131,44 @@ class _VisitNoteState extends State<VisitNote> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Remark:')),
+                            child: text('Phone:')),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: text(visitNoteList[index].remarks != null ? '${visitNoteList[index].remarks}' : '--')
+                            child: text(eventDetailList[index].phone != null ? '${eventDetailList[index].phone}' : '--')
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            child: text('DOB:')),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: text(
+                              eventDetailList[index].dOB != null ?
+                              '${eventDetailList[index].dOB}' : '--'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            child: text('Address:')),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: text(
+                              eventDetailList[index].address != null ?
+                              '${eventDetailList[index].address}' : '--'),
                         ),
                       ],
                     ),
@@ -149,8 +184,8 @@ class _VisitNoteState extends State<VisitNote> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: text(
-                              visitNoteList[index].date != null ?
-                              '${visitNoteList[index].date}' : '--'),
+                              eventDetailList[index].date != null ?
+                              '${eventDetailList[index].date}' : '--'),
                         ),
                       ],
                     ),

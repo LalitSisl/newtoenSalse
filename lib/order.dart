@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:salesapp/utils/secure_storage.dart';
 import 'package:xml2json/xml2json.dart';
 
+import 'Models/dashboard_order_list_model.dart';
 import 'Network/api.dart';
 
 class Order extends StatefulWidget {
@@ -18,8 +19,8 @@ class Order extends StatefulWidget {
 class _OrderState extends State<Order> {
 
   String staffCode="";
-
-  var orderList;
+  bool isLoading = true;
+  List<DashboardOrderListModel> orderList = <DashboardOrderListModel>[];
 
   @override
   void initState() {
@@ -34,8 +35,16 @@ class _OrderState extends State<Order> {
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.all(8.0),
-      child: ListView.builder(
-          itemCount: 3,
+      child: isLoading?
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+      : ListView.builder(
+          itemCount: orderList.isNotEmpty ? orderList.length : 0,
           itemBuilder: (context, index) {
             return Card(
               color: const Color.fromARGB(255, 166, 207, 240),
@@ -48,11 +57,11 @@ class _OrderState extends State<Order> {
                   children: [
                     Row(
                       children: [
-                        text('Customer Name:'),
+                        text('Item Name:'),
                         const SizedBox(
                           width: 20,
                         ),
-                        text('Lalit Sharma'),
+                        text('${orderList[index].iTEMITEMNAME}'),
                       ],
                     ),
                     const SizedBox(
@@ -60,11 +69,11 @@ class _OrderState extends State<Order> {
                     ),
                     Row(
                       children: [
-                        text('Item List:'),
+                        text('Item Code:'),
                         const SizedBox(
                           width: 70,
                         ),
-                        text('EMBOSSED'),
+                        text('${orderList[index].iTEMITEMCODE}'),
                       ],
                     ),
                     const SizedBox(
@@ -78,7 +87,7 @@ class _OrderState extends State<Order> {
                         ),
                         Expanded(
                           child: text(
-                              'Dear Jagveer There is a new lead posted with the remarks.'),
+                              '${orderList[index].itemDescRc}'),
                         ),
                       ],
                     ),
@@ -92,7 +101,7 @@ class _OrderState extends State<Order> {
                           width: 58,
                         ),
                         FittedBox(
-                          child: text('2000'),
+                          child: text('${orderList[index].sTRMRP}'),
                         ),
                       ],
                     ),
@@ -106,7 +115,7 @@ class _OrderState extends State<Order> {
                           width: 37,
                         ),
                         FittedBox(
-                          child: text('2'),
+                          child: text('${orderList[index].iTEMTRFRATE}'),
                         ),
                       ],
                     ),
@@ -168,35 +177,28 @@ class _OrderState extends State<Order> {
 
     if(statusCode==200){
 
+      print("res is ${res.body}");
+
       Xml2Json xml2Json=Xml2Json();
 
       xml2Json.parse(bodyIs);
       var jsonString = xml2Json.toParker();
-     var jsonString1=jsonString.replaceAll("\\r\\\\n  ", "\\n");
-      print("xml2Json1 is ${jsonString1}");
-
-      var data = jsonDecode(jsonString1);
-      var report=data['string'];
-      var reportIs= report.replaceAll("\r\\n","\\n");
-
-       reportIs=jsonDecode(reportIs);
-      print("data is $reportIs");
+      var data = jsonDecode(jsonString);
+      var subAreaCodeObject=data['string'];
+      subAreaCodeObject = subAreaCodeObject.toString().replaceAll("\\r\\\\n", "\n");
+      var object = json.decode(subAreaCodeObject.toString());
       setState(() {
-        orderList=reportIs['ItemList'];
+        object['ItemList'].forEach((v) {
+          orderList.add(DashboardOrderListModel.fromJson(v));
+        });
+        isLoading = false;
       });
-
-      print("notificationList is $orderList");
-
     }
-
     else{
-
+      setState(() {
+        isLoading = false;
+      });
     }
-
-
-
-
-
 
   }
 

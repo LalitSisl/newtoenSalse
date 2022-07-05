@@ -50,25 +50,33 @@ class _ReportState extends State<Report> {
                   child: Card(
                     color: Colors.white,
                     elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Image.asset('assets/images/event.png',
-                              scale: 1.5,
-                              color: const Color.fromARGB(
-                                  255, 105, 160, 206)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const Text(
-                            'Stock View',
-                            style: TextStyle(
-                              fontSize: 12,
-
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.28,
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/event.png',
+                                scale: 1.5,
+                                color: const Color.fromARGB(
+                                    255, 105, 160, 206)),
+                            const SizedBox(
+                              height: 5,
                             ),
-                          )
-                        ],
+                            const Text(
+                              'Stock View',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -80,25 +88,33 @@ class _ReportState extends State<Report> {
                   child: Card(
                     color: Colors.white,
                     elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Image.asset('assets/images/event.png',
-                              scale: 1.5,
-                              color: const Color.fromARGB(
-                                  255, 105, 160, 206)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const Text(
-                            'Sales Return View',
-                            style: TextStyle(
-                              fontSize: 12,
-
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.28,
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/event.png',
+                                scale: 1.5,
+                                color: const Color.fromARGB(
+                                    255, 105, 160, 206)),
+                            const SizedBox(
+                              height: 5,
                             ),
-                          )
-                        ],
+                            const Text(
+                              'Sales Return View',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -110,25 +126,33 @@ class _ReportState extends State<Report> {
                   child: Card(
                     color: Colors.white,
                     elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Image.asset('assets/images/event.png',
-                              scale: 1.5,
-                              color: const Color.fromARGB(
-                                  255, 105, 160, 206)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const Text(
-                            'Retailer summary',
-                            style: TextStyle(
-                              fontSize: 12,
-
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.28,
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/event.png',
+                                scale: 1.5,
+                                color: const Color.fromARGB(
+                                    255, 105, 160, 206)),
+                            const SizedBox(
+                              height: 5,
                             ),
-                          )
-                        ],
+                            const Text(
+                              'Retailer Summary',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -137,7 +161,7 @@ class _ReportState extends State<Report> {
             ),
             const SizedBox(height: 10,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
                   onTap: (){
@@ -146,25 +170,33 @@ class _ReportState extends State<Report> {
                   child: Card(
                     color: Colors.white,
                     elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Image.asset('assets/images/event.png',
-                              scale: 1.5,
-                              color: const Color.fromARGB(
-                                  255, 105, 160, 206)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const Text(
-                            'Complaint View',
-                            style: TextStyle(
-                              fontSize: 12,
-
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.28,
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/event.png',
+                                scale: 1.5,
+                                color: const Color.fromARGB(
+                                    255, 105, 160, 206)),
+                            const SizedBox(
+                              height: 5,
                             ),
-                          )
-                        ],
+                            const Text(
+                              'Complaint View',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -176,32 +208,230 @@ class _ReportState extends State<Report> {
                   child: Card(
                     color: Colors.white,
                     elevation: 5,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Image.asset('assets/images/event.png',
-                              scale: 1.5,
-                              color: const Color.fromARGB(
-                                  255, 105, 160, 206)),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const Text(
-                            'Visit Note View',
-                            style: TextStyle(
-                              fontSize: 12,
-
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.28,
+                      height: MediaQuery.of(context).size.height * 0.12,
+                      padding: const EdgeInsets.all(10),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/event.png',
+                                scale: 1.5,
+                                color: const Color.fromARGB(
+                                    255, 105, 160, 206)),
+                            const SizedBox(
+                              height: 5,
                             ),
-                          )
-                        ],
+                            const Text(
+                              'Visit Note View',
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.12,
+                  padding: const EdgeInsets.all(10),
+                  // child: Center(
+                  //   child: Column(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: [
+                  //       Image.asset('assets/images/event.png',
+                  //           scale: 1.5,
+                  //           color: const Color.fromARGB(
+                  //               255, 105, 160, 206)),
+                  //       const SizedBox(
+                  //         height: 5,
+                  //       ),
+                  //       const Text(
+                  //         'Retailer Summary',
+                  //         style: TextStyle(
+                  //           fontSize: 12,
+                  //         ),
+                  //         textAlign: TextAlign.center,
+                  //         softWrap: true,
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
+                ),
               ],
-            )
+            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     GestureDetector(
+            //       onTap: (){
+            //         Navigator.push(context, MaterialPageRoute(builder: (context) => StockView()));
+            //       },
+            //       child: Card(
+            //         color: Colors.white,
+            //         elevation: 5,
+            //         child: Padding(
+            //           padding: const EdgeInsets.all(15.0),
+            //           child: Column(
+            //             children: [
+            //               Image.asset('assets/images/event.png',
+            //                   scale: 1.5,
+            //                   color: const Color.fromARGB(
+            //                       255, 105, 160, 206)),
+            //               const SizedBox(
+            //                 height: 5,
+            //               ),
+            //               const Text(
+            //                 'Stock View',
+            //                 style: TextStyle(
+            //                   fontSize: 12,
+            //
+            //                 ),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     GestureDetector(
+            //       onTap: (){
+            //         Navigator.push(context, MaterialPageRoute(builder: (context) => SalesReturn()));
+            //       },
+            //       child: Card(
+            //         color: Colors.white,
+            //         elevation: 5,
+            //         child: Padding(
+            //           padding: const EdgeInsets.all(15.0),
+            //           child: Column(
+            //             children: [
+            //               Image.asset('assets/images/event.png',
+            //                   scale: 1.5,
+            //                   color: const Color.fromARGB(
+            //                       255, 105, 160, 206)),
+            //               const SizedBox(
+            //                 height: 5,
+            //               ),
+            //               const Text(
+            //                 'Sales Return View',
+            //                 style: TextStyle(
+            //                   fontSize: 12,
+            //
+            //                 ),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     GestureDetector(
+            //       onTap: (){
+            //         Navigator.push(context, MaterialPageRoute(builder: (context) => RetailerSummary()));
+            //       },
+            //       child: Card(
+            //         color: Colors.white,
+            //         elevation: 5,
+            //         child: Padding(
+            //           padding: const EdgeInsets.all(15.0),
+            //           child: Column(
+            //             children: [
+            //               Image.asset('assets/images/event.png',
+            //                   scale: 1.5,
+            //                   color: const Color.fromARGB(
+            //                       255, 105, 160, 206)),
+            //               const SizedBox(
+            //                 height: 5,
+            //               ),
+            //               const Text(
+            //                 'Retailer summary',
+            //                 style: TextStyle(
+            //                   fontSize: 12,
+            //
+            //                 ),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 10,),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     GestureDetector(
+            //       onTap: (){
+            //         Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintView()));
+            //       },
+            //       child: Card(
+            //         color: Colors.white,
+            //         elevation: 5,
+            //         child: Padding(
+            //           padding: const EdgeInsets.all(15.0),
+            //           child: Column(
+            //             children: [
+            //               Image.asset('assets/images/event.png',
+            //                   scale: 1.5,
+            //                   color: const Color.fromARGB(
+            //                       255, 105, 160, 206)),
+            //               const SizedBox(
+            //                 height: 5,
+            //               ),
+            //               const Text(
+            //                 'Complaint View',
+            //                 style: TextStyle(
+            //                   fontSize: 12,
+            //
+            //                 ),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     GestureDetector(
+            //       onTap: (){
+            //         Navigator.push(context, MaterialPageRoute(builder: (context) => VisitNote()));
+            //       },
+            //       child: Card(
+            //         color: Colors.white,
+            //         elevation: 5,
+            //         child: Padding(
+            //           padding: const EdgeInsets.all(15.0),
+            //           child: Column(
+            //             children: [
+            //               Image.asset('assets/images/event.png',
+            //                   scale: 1.5,
+            //                   color: const Color.fromARGB(
+            //                       255, 105, 160, 206)),
+            //               const SizedBox(
+            //                 height: 5,
+            //               ),
+            //               const Text(
+            //                 'Visit Note View',
+            //                 style: TextStyle(
+            //                   fontSize: 12,
+            //
+            //                 ),
+            //               )
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //
+            //   ],
+            // )
           ],
         ),
       ),
