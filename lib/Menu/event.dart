@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:salesapp/Menu/event_detail.dart';
-import 'package:salesapp/Models/event_type_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
+import '../Models/sys_type.dart';
 import '../Network/api.dart';
 import '../utils/secure_storage.dart';
 
@@ -19,8 +19,8 @@ class Event extends StatefulWidget {
 class _EventState extends State<Event> {
   bool isLoading = true;
   bool isButtonLoading = false;
-  List<EventTypeModel> eventTypeList = <EventTypeModel>[];
-  EventTypeModel eventType = EventTypeModel();
+  List<SysType> eventTypeList = <SysType>[];
+  SysType eventType = SysType();
   var formKey = GlobalKey<FormState>();
   var nameController = TextEditingController();
   var phoneController = TextEditingController();
@@ -58,7 +58,7 @@ class _EventState extends State<Event> {
       var object = json.decode(complaintObject.toString());
       setState(() {
         object['SysType'].forEach((v) {
-          eventTypeList.add(EventTypeModel.fromJson(v));
+          eventTypeList.add(SysType.fromJson(v));
         });
         eventType = eventTypeList[0];
         isLoading = false;
@@ -163,7 +163,7 @@ class _EventState extends State<Event> {
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 45,
-                child: DropdownButtonFormField<EventTypeModel>(
+                child: DropdownButtonFormField<SysType>(
                   decoration: const InputDecoration(
                     isDense: true, // Added this
                     contentPadding:
@@ -186,13 +186,13 @@ class _EventState extends State<Event> {
                   iconSize: 20,
                   style: TextStyle(color: Colors.black),
 
-                  items: eventTypeList.map<DropdownMenuItem<EventTypeModel>>((EventTypeModel value) {
-                    return DropdownMenuItem<EventTypeModel>(
+                  items: eventTypeList.map<DropdownMenuItem<SysType>>((SysType value) {
+                    return DropdownMenuItem<SysType>(
                       child: Text(value.name!),
                       value: value,
                     );
                   }).toList(),
-                  onChanged: (EventTypeModel? value) {
+                  onChanged: (SysType? value) {
                     setState(() {
                       eventType = value!;
                     });

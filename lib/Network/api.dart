@@ -61,4 +61,24 @@ class API {
   static final String Ws_Events = BASE_URL+"Ws_Events";
 
   static final String Ws_Event_Summary = BASE_URL+"Ws_Event_Summary";
+
+  static final String Ws_FDFM_ItemsModelNo = BASE_URL+"Ws_FDFM_ItemsModelNo";
+
+  static final String WS_Get_Syscode_ValuesV2 = BASE_URL+"WS_Get_Syscode_ValuesV2";
+
+  static final String Ws_Visit_Note_V3 = BASE_URL+"Ws_Visit_Note_V3";
+
+  static final String Ws_Collection_Master = BASE_URL+"Ws_Collection_Master";
+
+  static final String Ws_FDM_ItemMaster = BASE_URL+"Ws_FDM_ItemMaster";
+
+  static final String Ws_Stock_Update = BASE_URL+"Ws_Stock_Update";
+
+  static final String Ws_Upload_Picture_V1 = BASE_URL+"Ws_Upload_Picture_V1";
+
+  static final String Ws_Competitor_Details = BASE_URL+"Ws_Competitor_Details";
+
+  static final String Ws_Sales_Return = BASE_URL+"Ws_Sales_Return";
+
+  static final String Ws_Special_Instruction = BASE_URL+"Ws_Special_Instruction";
 }
