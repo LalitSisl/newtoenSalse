@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:salesapp/Menu/view_daily_calls.dart';
 import 'package:salesapp/Models/category.dart';
 import 'package:salesapp/Models/sub_area_code.dart';
 import 'package:salesapp/utils/secure_storage.dart';
@@ -127,6 +129,19 @@ class _DailyCallsState extends State<DailyCalls> {
         }
       ]
     };
+    var bodyStr = {
+      "Date": dateController.text.toString(),
+      "SaleExecutive" : salesExecutiveController.text.toString(),
+      "Area": "",
+      "SubArea": subAreaCode.subAreaCode.toString(),
+      "Calls_Made": callsMadeController.text.toString(),
+      "Executive_Calls": effectiveCallsController.text.toString(),
+      "Category": category.categoryId.toString(),
+      "Qty": quantityController.text.toString(),
+      "Amount": amountController.text.toString()
+    };
+    await UserSecureStorage().setDailyCalls(bodyStr.toString());
+    Fluttertoast.showToast(msg: "Daily Call submitted");
     var res= await http.post(Uri.parse(API.Ws_Save_Sales_Executive_Calls_Details),headers: {
       "Accept": "application/json",
       "Content-Type": "application/x-www-form-urlencoded"
@@ -515,6 +530,35 @@ class _DailyCallsState extends State<DailyCalls> {
                     child: const Center(
                       child: Text(
                         'Save',
+                        textScaleFactor: 1.2,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color.fromARGB(255, 16, 36, 53),
+                    ),
+                    height: 40,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ViewDailyCalls()));
+                    // setState(() {
+                    //   isButtonLoading = true;
+                    // });
+                    // _postSubmit();
+                  },
+                  child: Container(
+                    child: const Center(
+                      child: Text(
+                        'View Daily Calls',
                         textScaleFactor: 1.2,
                         style: TextStyle(color: Colors.white),
                       ),

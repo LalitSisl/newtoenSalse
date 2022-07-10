@@ -46,7 +46,7 @@ dependencies:
   firebase_core:
   cloud_firestore:
   flutter_secure_storage: ^5.0.2
-  image_picker:
+  image_picker: ^0.8.4
 #  geolocator:
 #  permission_handler:
 

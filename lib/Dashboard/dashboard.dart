@@ -176,7 +176,7 @@ class _DashboardState extends State<Dashboard> {
                 scale: 1.3,
                 width:20,
                 height: 50,
-                color: Colors.blueAccent,
+                // color: Colors.blueAccent,
               ),
             ),
           ),

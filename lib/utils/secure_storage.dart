@@ -42,4 +42,13 @@ class UserSecureStorage {
     return data;
   }
 
+  Future setDailyCalls(var dailyCalls) async {
+    await storage.write(key: "dailyCalls", value: "$dailyCalls");
+  }
+
+  Future getDailyCalls() async {
+    var dailyCalls = await storage.read(key: "dailyCalls");
+    return dailyCalls;
+  }
+
 }

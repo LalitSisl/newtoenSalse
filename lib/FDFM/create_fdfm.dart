@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:salesapp/FDFM/CitiesList.dart';
@@ -28,8 +29,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
   var cityList,cityTable=[],companyList,companyDetails=[],supportList,supportDetails=[],contact_person="";
 
   String staffCode="";
-
-
+  bool isButtonLoading = false;
 
   @override
   void initState() {
@@ -133,37 +133,39 @@ class _CreateFDFMState extends State<CreateFDFM> {
                 children: [
 
                   Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         children: [
                            text("Start Date"),
-            const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        width: 160,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.42,
+                              child: TextField(
+                                decoration: const InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.black)),
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.all(10.0),
+                                    hintStyle: TextStyle(fontSize: 13),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black),
+                                    )),
+                                controller: startdc,
+                                onTap: (){
+                                  _selectDate(context,"start");
+                                },
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black)),
-                              isDense: true,
-                              contentPadding: EdgeInsets.all(10.0),
-                              hintStyle: TextStyle(fontSize: 13),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black),
-                              )),
-                          controller: startdc,
-                          onTap: (){
-                            _selectDate(context,"start");
-                          },
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                      SizedBox(width:40),
+                      SizedBox(width:10),
                       Column(
                         children: [
                           text("End Date"),
@@ -171,7 +173,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
                             height: 5,
                           ),
                           Container(
-                            width: 160,
+                            width: MediaQuery.of(context).size.width * 0.42,
                             child: TextField(
 
                               decoration: const InputDecoration(
@@ -197,7 +199,9 @@ class _CreateFDFMState extends State<CreateFDFM> {
                       ),
                         ],
                       ),
-
+                  const SizedBox(
+                    height: 7,
+                  ),
                   text('Staff Member'),
                   const SizedBox(
                     height: 5,
@@ -500,7 +504,9 @@ class _CreateFDFMState extends State<CreateFDFM> {
                   ),
                   GestureDetector(
                     onTap: () {
-
+                      setState(() {
+                        isButtonLoading = true;
+                      });
                       createFDFM(staffCode, mobileController.text, startdc.text, companyt, contactPerson.text, cityCode, support, enddc.text, type);
 
                       // Navigator.push(
@@ -509,7 +515,21 @@ class _CreateFDFMState extends State<CreateFDFM> {
                       //         builder: (context) => const Dashboard()));
 
                     },
-                    child: Container(
+                    child: isButtonLoading ?
+                    Container(
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 1.0,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 16, 36, 53),
+                      ),
+                      height: 45,
+                    ):
+                    Container(
                       child: const Center(
                         child: Text(
                           'Save',
@@ -769,7 +789,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
   var bodyStr=json.encode(list);
 
   await UserSecureStorage().setBodyHeader(bodyStr);
-
+  Fluttertoast.showToast(msg: "FDFM created successfully");
   setState(() {
     Navigator.pop(context,true);
   });
