@@ -18,8 +18,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  final _empIdController = TextEditingController(text:"admin");
-  final _passwordController = TextEditingController(text:"babg11");
+  final _empIdController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool isLoading = false;
 
   Future<void> login(String user, String pass) async {
