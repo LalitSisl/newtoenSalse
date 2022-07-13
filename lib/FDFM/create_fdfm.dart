@@ -781,15 +781,8 @@ class _CreateFDFMState extends State<CreateFDFM> {
   setState(() {
     Navigator.pop(context,true);
   });
-
-
-}
-
-  else{
-
+} else{
   }
-
   }
-
 
 }

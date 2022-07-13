@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:salesapp/utils/secure_storage.dart';
+import 'package:xml2json/xml2json.dart';
 
 import '../Models/daily_calls_model.dart';
-
+import '../Network/api.dart';
+import 'package:http/http.dart' as http;
 class ViewDailyCalls extends StatefulWidget {
   const ViewDailyCalls({Key? key}) : super(key: key);
 
@@ -13,28 +15,79 @@ class ViewDailyCalls extends StatefulWidget {
 }
 
 class _ViewDailyCallsState extends State<ViewDailyCalls> {
-  bool isLoading = true;
+  bool isLoading = false;
   DailyCallsModel dailyCallsModel = DailyCallsModel();
 
-  Future<void> getDailyCalls() async {
-    var dailyCalls = await UserSecureStorage().getDailyCalls();
-    print("$dailyCalls");
-    print("${jsonDecode(dailyCalls)}");
-    // var body = jsonDecode(dailyCalls);
-    setState(() {
-      dailyCallsModel = DailyCallsModel.fromJson(dailyCalls);
-      print("${dailyCallsModel}");
-    });
-  }
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getDailyCalls();
+    getStaffCode();
+  }
+var staffCode;
+  getStaffCode() async{
+
+    setState(() async {
+      staffCode= await UserSecureStorage().getStaffId();
+      _getCustomers();
+      //  staffController.text=staffCode;
+    });
+
+
   }
 
-  @override
+  _getCustomers() async {
+    setState((){
+      isLoading = true;
+    });
+    var res= await http.post(Uri.parse(API.Ws_Get_Call_History),headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+        body: {
+          "UserId":staffCode,
+
+        }
+    );
+
+    var bodyIs=res.body;
+    var statusCode=res.statusCode;
+    print("res is $bodyIs");
+
+    if(statusCode==200){
+      Xml2Json xml2Json=Xml2Json();
+
+      xml2Json.parse(bodyIs);
+      var jsonString = xml2Json.toParker();
+
+      print("xml2Json is ${jsonString}");
+
+      var data = jsonDecode(jsonString);
+      var report=data['string'];
+      var subAreaCodeObject=data['string'];
+      subAreaCodeObject = subAreaCodeObject.toString().replaceAll("\\r\\\\n", "\n");
+      var object = json.decode(subAreaCodeObject.toString());
+      setState(() {
+        list = object['call_History'];
+        object['call_History'].forEach((v) {
+          //orderList.add(DashboardOrderListModel.fromJson(v));
+        });
+        isLoading = false;
+      });
+    }
+    else{
+      setState((){
+        isLoading = false;
+      });
+    }
+  }
+
+var list;
+
+
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -57,137 +110,131 @@ class _ViewDailyCallsState extends State<ViewDailyCalls> {
 
       ),
       body: isLoading?
-      SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
+      const Center(
+        child: CircularProgressIndicator(),
       )
           : ListView.builder(
-          itemCount: 1,
+          itemCount: list.length,
           itemBuilder: (context, index) {
-            return Card(
-              color: const Color.fromARGB(255, 166, 207, 240),
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Date:')),
-                        SizedBox(
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                color: const Color.fromARGB(255, 166, 207, 240),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Date:')),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: text(list[index]['Date'] ?? '--')),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Sub Area:')),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              child: text(list[index]['Area Desc'] ?? '--')
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Category:')),
+                          SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: text(dailyCallsModel.date != null ? '${dailyCallsModel.date}' : '--')),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Sub Area:')),
-                        SizedBox(
+                            child: text(
+                                list[index]['Category Name'] ?? '--'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Calls Made:')),
+                          SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: text(dailyCallsModel.subArea != null ? '${dailyCallsModel.subArea}' : '--')
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Category:')),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: text(
-                              dailyCallsModel.category != null ?
-                              '${dailyCallsModel.category}' : '--'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Calls Made:')),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: text(
-                              dailyCallsModel.callsMade != null ?
-                              '${dailyCallsModel.callsMade}' : '--'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Eff. Calls:')),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: text(
-                              dailyCallsModel.executiveCalls != null ?
-                              '${dailyCallsModel.executiveCalls}' : '--'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Quantity:')),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: text(
-                              dailyCallsModel.qty != null ?
-                              '${dailyCallsModel.qty}' : '--'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Amount:')),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          child: text(
-                              dailyCallsModel.amount != null ?
-                              '${dailyCallsModel.amount}' : '--'),
-                        ),
-                      ],
-                    ),
-                  ],
+                            child: text(
+                                list[index]['Calls_Made'].toString()),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Eff. Calls:')),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: text(
+                                list[index]['Effective_Calls'].toString()),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Quantity:')),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: text(
+                                list[index]['Qty'].toString()),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: text('Amount:')),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: text(
+                                list[index]['Amount'].toString()),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -203,13 +250,14 @@ class _ViewDailyCallsState extends State<ViewDailyCalls> {
           style: const TextStyle(
             color: Colors.black,
           ),
-          children: const [
-            TextSpan(
-                text: ' *',
-                style: TextStyle(
-                  color: Colors.red,
-                ))
-          ]),
+          // children: const [
+          //   TextSpan(
+          //       text: ' *',
+          //       style: TextStyle(
+          //         color: Colors.red,
+          //       ))
+          // ]
+      ),
     );
   }
 }

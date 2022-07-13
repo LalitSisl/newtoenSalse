@@ -18,15 +18,26 @@ class _FollowUpState extends State<FollowUp> {
 
   List followUpList = [];
   bool isLoading = true;
+  var staffCode;
+
+  getStaffCode() async{
+
+      staffCode= await UserSecureStorage().getStaffId();
+      _getFollowUp();
+      //  staffController.text=staffCode;
+
+
+
+  }
 
   _getFollowUp() async {
-    var staffId = await UserSecureStorage().getStaffId();
+
     var res= await http.post(Uri.parse(API.Ws_FollowUp_Detail_View_V2),headers: {
       "Accept": "application/json",
       "Content-Type": "application/x-www-form-urlencoded"
     },
         body: jsonEncode({
-          '_StaffID ': '$staffId',
+          '_StaffID ': '$staffCode',
           '_VisitorCode':'101',
           '_TenantCode': '01',
           '_Location': '110001',
@@ -67,7 +78,7 @@ class _FollowUpState extends State<FollowUp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getFollowUp();
+    getStaffCode();
   }
 
   @override
@@ -103,7 +114,7 @@ class _FollowUpState extends State<FollowUp> {
                 ),
               )
               : ListView.builder(
-              itemCount: followUpList.isNotEmpty?followUpList.length:0,
+              itemCount: followUpList.isNotEmpty ? followUpList.length:0,
               itemBuilder: (context, index) {
                 return Card(
                   color: const Color.fromARGB(255, 191, 200, 209),

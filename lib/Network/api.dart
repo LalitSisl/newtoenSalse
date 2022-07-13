@@ -86,5 +86,9 @@ class API {
 
   static final String Ws_Day_Check_Out = BASE_URL+"Ws_Day_Check_Out";
 
+  static final String Ws_Product_Api = BASE_URL+"Ws_Order_ItemMaster";
+
+  static final String Ws_Get_Call_History = BASE_URL+"Ws_Get_Call_History";
+
 
 }

@@ -240,7 +240,7 @@ class _ExpensesState extends State<Expenses> {
               child: Container(
                 child: const Center(
                   child: Text(
-                    'Add Event',
+                    'Add Expenses',
                     textScaleFactor: 1.2,
                     style: TextStyle(color: Colors.white),
                   ),

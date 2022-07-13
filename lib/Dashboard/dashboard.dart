@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:salesapp/Daily_Report/daily_report.dart';
 import 'package:salesapp/Dashboard/home.dart';
 import 'package:salesapp/FDFM/create_fdfm.dart';
 import 'package:salesapp/FDFM/view_fdfm.dart';
 import 'package:salesapp/Menu/customers.dart';
 import 'package:salesapp/Menu/daily_calles.dart';
+import 'package:salesapp/Menu/empMove.dart';
 import 'package:salesapp/Menu/expenses.dart';
 import 'package:salesapp/Menu/follow_up.dart';
 import 'package:salesapp/Menu/future_plan.dart';
@@ -25,8 +27,11 @@ import 'package:http/http.dart' as http;
 import 'package:salesapp/utils/secure_storage.dart';
 import 'package:xml2json/xml2json.dart';
 import '../Authentication/login.dart';
+import '../Menu/about_newton.dart';
 import '../Menu/event.dart';
 import '../Network/api.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class Dashboard extends StatefulWidget {
   String user;
@@ -88,7 +93,34 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     getStaffCode();
     getViewFDFM();
+    getLocation();
   }
+
+  GoogleMapController? _controller;
+  Location currentLocation = Location();
+  Set<Marker> _markers={};
+  var lat;
+  var lang;
+  void getLocation() async{
+    var location = await currentLocation.getLocation();
+    currentLocation.onLocationChanged.listen((LocationData loc){
+
+      _controller?.animateCamera(CameraUpdate.newCameraPosition(new CameraPosition(
+        target: LatLng(loc.latitude ?? 0.0,loc.longitude?? 0.0),
+        zoom: 12.0,
+      )));
+      print(loc.latitude);
+      print(loc.longitude);
+      setState(() {
+        lat = loc.latitude;
+        lang = loc.longitude;
+        _markers.add(Marker(markerId: MarkerId('Home'),
+            position: LatLng(loc.latitude ?? 0.0, loc.longitude ?? 0.0)
+        ));
+      });
+    });
+  }
+
   bool isLoading = false;
 
 
@@ -589,7 +621,10 @@ class _DashboardState extends State<Dashboard> {
                           children: [
                             GestureDetector(
                               onTap: () {
-
+                                MapsLauncher.launchCoordinates(lat, lang);
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (context)
+                            //     => MapScreen()));
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width * 0.18,
@@ -906,32 +941,37 @@ class _DashboardState extends State<Dashboard> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.18,
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: const [
-                                  Image(
-                                    image: AssetImage(
-                                      'assets/images/about.png',
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutNewton()));
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.18,
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: const [
+                                    Image(
+                                      image: AssetImage(
+                                        'assets/images/about.png',
+                                      ),
+                                      height: 20.0,
+                                      color: Colors.blueAccent,
                                     ),
-                                    height: 20.0,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    'About Newton',
-                                    style: TextStyle(
-                                      fontSize: 12,
+                                    SizedBox(
+                                      height: 5,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  )
-                                ],
+                                    Text(
+                                      'About Newton',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             GestureDetector(

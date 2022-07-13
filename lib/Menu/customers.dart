@@ -131,41 +131,9 @@ class _CustomersState extends State<Customers> {
       });
 
       print("reportList is $reportList");
-      // for (var i in report){
-      //   // Column(children:[
-      //   //   Text(i.keys)
-      //   //   Text(i.values),
-      //   // ])
-      //  var valuis= i.values;
-      //   print("i value is $valuis");
-      //
-      // }
-
-
-
-
-     //reportList=distributedReport.report;
-
-    // print("reportLis is $distributedList");
-
-
-      // setState(() {
-      //   Navigator.of(context).pushReplacement(MaterialPageRoute(
-      //       builder: (BuildContext context) => Dashboard()));
-      // });
-
 
     }
-
     else{
-
     }
-
-
-
-
-
-
   }
-
 }
