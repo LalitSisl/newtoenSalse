@@ -9,7 +9,14 @@ class UserSecureStorage {
   Future setStaffId(var staffId) async {
     await storage.write(key: "staffId", value: "$staffId");
   }
+  Future setuser(var user) async {
+    await storage.write(key: "user", value: "$user");
+  }
 
+  Future getuser() async {
+    var user = await storage.read(key: "user");
+    return user;
+  }
   Future getStaffId() async {
     var staffId = await storage.read(key: "staffId");
     return staffId;
@@ -40,6 +47,24 @@ class UserSecureStorage {
   Future getData() async {
     var data = await storage.read(key: "data");
     return data;
+  }
+
+  Future setDailyCalls(var dailyCalls) async {
+    await storage.write(key: "dailyCalls", value: "$dailyCalls");
+  }
+
+  Future getDailyCalls() async {
+    var dailyCalls = await storage.read(key: "dailyCalls");
+    return dailyCalls;
+  }
+
+  Future setfdfmcreate(var setfdfm) async {
+    await storage.write(key: "fdfm", value: "$setfdfm");
+  }
+
+  Future getfdfmcreate() async {
+    var fdfm = await storage.read(key: "fdfm");
+    return fdfm;
   }
 
 }

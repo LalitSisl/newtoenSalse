@@ -1,5 +1,13 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:xml2json/xml2json.dart';
+
+import '../Models/order_item_model.dart';
+import '../Network/api.dart';
+import '../utils/secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 class Order extends StatefulWidget {
   const Order({Key? key}) : super(key: key);
@@ -9,7 +17,61 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
-  var type;
+  bool isLoading = true;
+  List<OrderItemModel> itemList = <OrderItemModel>[];
+  OrderItemModel orderItem = OrderItemModel();
+
+  _getOrderItem() async {
+    var staffId = await UserSecureStorage().getStaffId();
+    var res= await http.post(Uri.parse(API.Ws_FDFM_ItemsModelNo),headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+        body: {
+          '_SysCodeType': "DocType",
+          '_UserName':"$staffId",
+          '_VisitorId':'101',
+          '_TenantCode': '01',
+          '_Location': '110001'
+        }
+    );
+
+    var bodyIs=res.body;
+    var statusCode=res.statusCode;
+    if(statusCode==200){
+
+      print("res is ${res.body}");
+
+      Xml2Json xml2Json=Xml2Json();
+
+      xml2Json.parse(bodyIs);
+      var jsonString = xml2Json.toParker();
+      var data = jsonDecode(jsonString);
+      var complaintObject=data['string'];
+      complaintObject = complaintObject.toString().replaceAll("\\r\\\\n", "\n");
+      var object = json.decode(complaintObject.toString());
+      setState(() {
+        object['SchemeSKU'].forEach((v) {
+          itemList.add(OrderItemModel.fromJson(v));
+        });
+        orderItem = itemList[0];
+        isLoading = false;
+      });
+    }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getOrderItem();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +96,15 @@ class _OrderState extends State<Order> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        child: Column(
+        child: isLoading?
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        )
+            : Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,7 +136,7 @@ class _OrderState extends State<Order> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 45,
-              child: DropdownButtonFormField<String>(
+              child: DropdownButtonFormField<OrderItemModel>(
                 decoration: const InputDecoration(
                   isDense: true, // Added this
                   contentPadding:
@@ -78,7 +148,7 @@ class _OrderState extends State<Order> {
                     borderSide: BorderSide(),
                   ),
                 ),
-                value: type,
+                value: orderItem,
                 hint: const Text(
                   'Select Item',
                   style: TextStyle(fontSize: 13),
@@ -89,20 +159,15 @@ class _OrderState extends State<Order> {
                 iconSize: 20,
                 style: TextStyle(color: Colors.black),
 
-                items: [
-                  'Normal Plan',
-                  'EXHB and Survey',
-                  'Telephonic',
-                  'Video Call',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    child: Text(value),
+                items: itemList.map<DropdownMenuItem<OrderItemModel>>((OrderItemModel value) {
+                  return DropdownMenuItem<OrderItemModel>(
+                    child: Text(value.sYSCDSCODEDESC!),
                     value: value,
                   );
                 }).toList(),
-                onChanged: (salutation) {
+                onChanged: (OrderItemModel? value) {
                   setState(() {
-                    type = salutation;
+                    orderItem = value!;
                   });
                 },
                 //value: dropdownProject,

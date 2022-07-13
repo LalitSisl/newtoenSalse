@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_calendar/flutter_advanced_calendar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salesapp/create_order.dart';
 import 'package:salesapp/utils/secure_storage.dart';
-
+import '../Network/api.dart';
+import 'package:http/http.dart' as http;
 class Home extends StatefulWidget {
 
   const Home({Key? key}) : super(key: key);
@@ -25,6 +29,14 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     method();
+    getStaffCode();
+  }
+  var staffCode;
+  Future getStaffCode() async {
+    setState(() async {
+      staffCode= await UserSecureStorage().getStaffId();
+    });
+
   }
 
   var EmpName;
@@ -33,6 +45,52 @@ class _HomeState extends State<Home> {
       EmpName = await UserSecureStorage().getEmpName();
     });
   }
+
+  _checkIn() async {
+    var res= await http.post(Uri.parse(API.Ws_Day_Check_In),headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+        body: {
+          "_StaffId":staffCode,
+          "_VisitCode":"101",
+          "_TenantCode": "01",
+          "_Location":"110001"
+        }
+    );
+    var bodyIs=res.body;
+    var statusCode=res.statusCode;
+    if(statusCode==200){
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Checked In Successfully"),
+      ));
+    }
+    else{}
+  }
+
+  _checkOut() async {
+    var res= await http.post(Uri.parse(API.Ws_Day_Check_Out),headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+        body: {
+          "_StaffId":staffCode,
+          "_VisitCode":"101",
+          "_TenantCode": "01",
+          "_Location":"110001"
+        }
+    );
+    var bodyIs=res.body;
+    var statusCode=res.statusCode;
+    if(statusCode==200){
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Checked Out Successfully"),
+      ));
+    }
+    else{}
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,80 +149,15 @@ class _HomeState extends State<Home> {
           const SizedBox(
             height: 7,
           ),
-          // const Padding(
-          //   padding: EdgeInsets.symmetric(
-          //     horizontal: 15,
-          //   ),
-          //   child: Align(
-          //     alignment: Alignment.topLeft,
-          //     child: Text(
-          //       'Location',
-          //       style: TextStyle(),
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   height: 5,
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
-          //   child: SizedBox(
-          //     width: MediaQuery.of(context).size.width,
-          //     height: 45,
-          //     child: DropdownButtonFormField<String>(
-          //       hint: const Text('Select Location'),
-          //       decoration: const InputDecoration(
-          //         isDense: true, // Added this
-          //         contentPadding:
-          //             EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-          //         focusedBorder: OutlineInputBorder(
-          //           borderSide: BorderSide(),
-          //         ),
-          //         enabledBorder: OutlineInputBorder(
-          //           borderSide: BorderSide(),
-          //         ),
-          //       ),
-          //       value: place,
-
-          //       dropdownColor: Colors.white,
-          //       isExpanded: true,
-
-          //       iconSize: 20,
-          //       style: const TextStyle(color: Colors.black),
-
-          //       items: [
-          //         'In Office',
-          //         'In Field',
-          //         'Travelling',
-          //         'Training',
-          //         'WFH',
-          //         'External Meeting'
-          //       ].map<DropdownMenuItem<String>>((String value) {
-          //         return DropdownMenuItem<String>(
-          //           child: Text(value),
-          //           value: value,
-          //         );
-          //       }).toList(),
-          //       onChanged: (salutation) {
-          //         setState(() {
-          //           place = salutation;
-          //         });
-          //       },
-          //       //value: dropdownProject,
-          //       validator: (value) => value == null ? 'field required' : null,
-          //     ),
-          //   ),
-          // ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {_checkIn();},
                 child: const Text('Check-In'),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {_checkOut();},
                 child: const Text('Check-Out'),
               ),
             ],

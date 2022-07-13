@@ -45,4 +45,46 @@ class API {
   static final String Ws_Get_SubArea = BASE_URL+"Ws_Get_SubArea";
 
   static final String Ws_Get_ItemCategory = BASE_URL+"Ws_Get_ItemCategory";
+
+  static final String Ws_Save_Sales_Executive_Calls_Details = BASE_URL+"Ws_Save_Sales_Executive_Calls_Details";
+
+  static final String Ws_Stock_Summary = BASE_URL+"Ws_Stock_Summary";
+
+  static final String Ws_Sales_Return_View = BASE_URL+"Ws_Sales_Return_View";
+
+  static final String Ws_FDFM_RetailerDetailsInfo_StaffWise_Details = BASE_URL+"Ws_FDFM_RetailerDetailsInfo_StaffWise_Details";
+
+  static final String Ws_Complaint_Detail_View = BASE_URL+"Ws_Complaint_Detail_View";
+
+  static final String Ws_Secondry_Sale_Dynamic_Report = BASE_URL+"Ws_Secondry_Sale_Dynamic_Report";
+
+  static final String Ws_Events = BASE_URL+"Ws_Events";
+
+  static final String Ws_Event_Summary = BASE_URL+"Ws_Event_Summary";
+
+  static final String Ws_FDFM_ItemsModelNo = BASE_URL+"Ws_FDFM_ItemsModelNo";
+
+  static final String WS_Get_Syscode_ValuesV2 = BASE_URL+"WS_Get_Syscode_ValuesV2";
+
+  static final String Ws_Visit_Note_V3 = BASE_URL+"Ws_Visit_Note_V3";
+
+  static final String Ws_Collection_Master = BASE_URL+"Ws_Collection_Master";
+
+  static final String Ws_FDM_ItemMaster = BASE_URL+"Ws_FDM_ItemMaster";
+
+  static final String Ws_Stock_Update = BASE_URL+"Ws_Stock_Update";
+
+  static final String Ws_Upload_Picture_V1 = BASE_URL+"Ws_Upload_Picture_V1";
+
+  static final String Ws_Competitor_Details = BASE_URL+"Ws_Competitor_Details";
+
+  static final String Ws_Sales_Return = BASE_URL+"Ws_Sales_Return";
+
+  static final String Ws_Special_Instruction = BASE_URL+"Ws_Special_Instruction";
+
+  static final String Ws_Day_Check_In = BASE_URL+"Ws_Day_Check_In";
+
+  static final String Ws_Day_Check_Out = BASE_URL+"Ws_Day_Check_Out";
+
+
 }

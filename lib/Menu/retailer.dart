@@ -1,4 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:xml2json/xml2json.dart';
+import '../Network/api.dart';
+import '../utils/secure_storage.dart';
+import 'package:http/http.dart' as http;
+
 class RetailerSummary extends StatefulWidget {
   const RetailerSummary({Key? key}) : super(key: key);
 
@@ -7,6 +14,59 @@ class RetailerSummary extends StatefulWidget {
 }
 
 class _RetailerSummaryState extends State<RetailerSummary> {
+
+  bool isLoading = true;
+
+  _getRetailer() async {
+    var staffId = await UserSecureStorage().getStaffId();
+    var res= await http.post(Uri.parse(API.Ws_FDFM_RetailerDetailsInfo_StaffWise_Details),headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+        body: {
+          '_StaffID':"$staffId",
+          '_VisitCode':'101',
+          '_TenantCode': '01',
+          '_Location': '110001'
+        }
+    );
+
+    var bodyIs=res.body;
+    var statusCode=res.statusCode;
+    if(statusCode==200){
+
+      print("res is ${res.body}");
+
+      Xml2Json xml2Json=Xml2Json();
+
+      xml2Json.parse(bodyIs);
+      var jsonString = xml2Json.toParker();
+      var data = jsonDecode(jsonString);
+      var productObject=data['string'];
+      productObject = productObject.toString().replaceAll("\\r\\\\n", "\n");
+      var object = json.decode(productObject.toString());
+      setState(() {
+        // object['SysType'].forEach((v) {
+        //   productList.add(SysType.fromJson(v));
+        // });
+        // product = productList[0];
+        isLoading = false;
+      });
+    }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getRetailer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +89,110 @@ class _RetailerSummaryState extends State<RetailerSummary> {
         ),
 
       ),
+      body: isLoading?
+      SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
+          : ListView.builder(
+          itemCount: 3,
+          itemBuilder: (context, index) {
+            // return Card(
+            //   color: const Color.fromARGB(255, 166, 207, 240),
+            //   elevation: 5,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(8.0),
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment.start,
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Row(
+            //           children: [
+            //             text('Item Name:'),
+            //             const SizedBox(
+            //               width: 20,
+            //             ),
+            //             text('${orderList[index].iTEMITEMNAME}'),
+            //           ],
+            //         ),
+            //         const SizedBox(
+            //           height: 10,
+            //         ),
+            //         Row(
+            //           children: [
+            //             text('Item Code:'),
+            //             const SizedBox(
+            //               width: 70,
+            //             ),
+            //             text('${orderList[index].iTEMITEMCODE}'),
+            //           ],
+            //         ),
+            //         const SizedBox(
+            //           height: 10,
+            //         ),
+            //         Row(
+            //           children: [
+            //             text('Remarks:'),
+            //             const SizedBox(
+            //               width: 68,
+            //             ),
+            //             Expanded(
+            //               child: text(
+            //                   '${orderList[index].itemDescRc}'),
+            //             ),
+            //           ],
+            //         ),
+            //         const SizedBox(
+            //           height: 10,
+            //         ),
+            //         Row(
+            //           children: [
+            //             text('Item Price:'),
+            //             const SizedBox(
+            //               width: 58,
+            //             ),
+            //             FittedBox(
+            //               child: text('${orderList[index].sTRMRP}'),
+            //             ),
+            //           ],
+            //         ),
+            //         const SizedBox(
+            //           height: 10,
+            //         ),
+            //         Row(
+            //           children: [
+            //             text('Item Quantity:'),
+            //             const SizedBox(
+            //               width: 37,
+            //             ),
+            //             FittedBox(
+            //               child: text('${orderList[index].iTEMTRFRATE}'),
+            //             ),
+            //           ],
+            //         ),
+            //         const SizedBox(
+            //           height: 10,
+            //         ),
+            //         Row(
+            //           children: [
+            //             text('Amount:'),
+            //             const SizedBox(
+            //               width: 73,
+            //             ),
+            //             FittedBox(
+            //               child: text('2000'),
+            //             ),
+            //           ],
+            //         )
+            //       ],
+            //     ),
+            //   ),
+            // );
+            return Container();
+          }),
     );
   }
 }

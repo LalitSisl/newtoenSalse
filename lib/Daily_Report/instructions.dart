@@ -1,5 +1,11 @@
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:xml2json/xml2json.dart';
+
+import '../Models/instruction_model.dart';
+import '../Network/api.dart';
 
 class Instructions extends StatefulWidget {
   const Instructions({Key? key}) : super(key: key);
@@ -9,6 +15,61 @@ class Instructions extends StatefulWidget {
 }
 
 class _InstructionsState extends State<Instructions> {
+
+  bool isLoading = true;
+  List<InstructionModel> instructionList = <InstructionModel>[];
+  InstructionModel instruction = InstructionModel();
+
+  _getInstructionList() async {
+    var res= await http.post(Uri.parse(API.Ws_Special_Instruction),headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+        body: {
+          '_SysCodeType': "SALES_RETURN_REASON",
+          '_UserName':"01",
+          '_VisitorId':'01',
+          '_TenantCode': '101',
+          '_Location': '110001'
+        }
+    );
+
+    var bodyIs=res.body;
+    var statusCode=res.statusCode;
+    if(statusCode==200){
+
+      print("res is ${res.body}");
+
+      Xml2Json xml2Json=Xml2Json();
+
+      xml2Json.parse(bodyIs);
+      var jsonString = xml2Json.toParker();
+      var data = jsonDecode(jsonString);
+      var complaintObject=data['string'];
+      complaintObject = complaintObject.toString().replaceAll("\\r\\\\n", "\n");
+      var object = json.decode(complaintObject.toString());
+      setState(() {
+        object['Instruction'].forEach((v) {
+          instructionList.add(InstructionModel.fromJson(v));
+        });
+        instruction = instructionList[0];
+        isLoading = false;
+      });
+    }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getInstructionList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,8 +94,16 @@ class _InstructionsState extends State<Instructions> {
       ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-              itemCount: 3,
+          child: isLoading ?
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ):
+          ListView.builder(
+              itemCount: instructionList.isNotEmpty?instructionList.length:0,
               itemBuilder: (context, index) {
                 return Card(
                   color: const Color.fromARGB(255, 166, 207, 240),
@@ -59,23 +128,15 @@ class _InstructionsState extends State<Instructions> {
                         const SizedBox(
                           height: 10,
                         ),
-                        text('Dear Jagveer'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        text('There is a new lead posted with remarks'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        text('Please see the lead.'),
+                        text("${instructionList[index].mEMOTEXT}"),
                         const SizedBox(
                           height: 10,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            text('Jagveer'),
-                            text('18-08-2019'),
+                            // text('Jagveer'),
+                            text("${instructionList[index].mEMODATE}"),
                           ],
                         ),
 

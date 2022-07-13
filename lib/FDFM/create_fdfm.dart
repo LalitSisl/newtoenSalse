@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:salesapp/FDFM/CitiesList.dart';
@@ -28,8 +29,8 @@ class _CreateFDFMState extends State<CreateFDFM> {
   var cityList,cityTable=[],companyList,companyDetails=[],supportList,supportDetails=[],contact_person="";
 
   String staffCode="";
-
-
+  String staffuser="";
+  bool isButtonLoading = false;
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
 
   }
 
-  var type;
+  var type = "Normal Plan";
   var city,cityCode;
   var company,contact,companyt,roleCode="",mobileNumber;
   var contect;
@@ -62,7 +63,8 @@ class _CreateFDFMState extends State<CreateFDFM> {
 
     setState(() async {
       staffCode= await UserSecureStorage().getStaffId();
-      staffController.text=staffCode;
+      staffuser= await UserSecureStorage().getuser();
+      staffController.text=staffuser;
     });
 
 
@@ -86,8 +88,9 @@ class _CreateFDFMState extends State<CreateFDFM> {
       var formattedDate=  dateFormat.format(selectedDate);
       if(dateType.contains("start")) {
         startdc.text=formattedDate.toString();
-      } else{
         enddc.text=formattedDate.toString();
+      } else{
+        //enddc.text=formattedDate.toString();
       }
       });
     }
@@ -133,37 +136,39 @@ class _CreateFDFMState extends State<CreateFDFM> {
                 children: [
 
                   Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         children: [
                            text("Start Date"),
-            const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                        width: 160,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.42,
+                              child: TextField(
+                                decoration: const InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.black)),
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.all(10.0),
+                                    hintStyle: TextStyle(fontSize: 13),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.black),
+                                    )),
+                                controller: startdc,
+                                onTap: (){
+                                  _selectDate(context,"start");
+                                },
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.black)),
-                              isDense: true,
-                              contentPadding: EdgeInsets.all(10.0),
-                              hintStyle: TextStyle(fontSize: 13),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black),
-                              )),
-                          controller: startdc,
-                          onTap: (){
-                            _selectDate(context,"start");
-                          },
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                      SizedBox(width:40),
+                      const SizedBox(width:10),
                       Column(
                         children: [
                           text("End Date"),
@@ -171,7 +176,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
                             height: 5,
                           ),
                           Container(
-                            width: 160,
+                            width: MediaQuery.of(context).size.width * 0.42,
                             child: TextField(
 
                               decoration: const InputDecoration(
@@ -197,55 +202,30 @@ class _CreateFDFMState extends State<CreateFDFM> {
                       ),
                         ],
                       ),
-
-                  text('Staff Member'),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                   TextField(
-                    decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.black)),
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(10.0),
-                        hintStyle: TextStyle(fontSize: 13),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        )),
-
-                    controller: staffController,
-
-                  ),
                   const SizedBox(
                     height: 7,
                   ),
-                  text('Mobile'),
+
+                  Row(
+                    children: [
+                      const Text('Staff Member',style:  TextStyle(color: Colors.black),),
+                      const SizedBox(width: 20,),
+                      Text(staffuser,style: const TextStyle(color: Colors.blue),),
+                    ],
+                  ),
+
+
                   const SizedBox(
-                    height: 5,
+                    height: 7,
                   ),
-                   TextField(
-                    decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black)),
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(10.0),
-                      hintStyle: TextStyle(fontSize: 13),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-
-
-                    ),
-
-                    controller: mobileController,
+                  Row(
+                    children: [
+                      const Text('Mobile Number',style:  TextStyle(color: Colors.black),),
+                      const SizedBox(width: 20,),
+                      Text(mobile,style: const TextStyle(color: Colors.blue),),
+                    ],
                   ),
+
                   const SizedBox(
                     height: 7,
                   ),
@@ -269,10 +249,10 @@ class _CreateFDFMState extends State<CreateFDFM> {
                         ),
                       ),
                       value: type,
-                      hint: const Text(
-                        'Select Type',
-                        style: TextStyle(fontSize: 13),
-                      ),
+                      // hint: const Text(
+                      //   'Select Type',
+                      //   style: TextStyle(fontSize: 13),
+                      // ),
                       dropdownColor: Colors.white,
                       isExpanded: true,
                       iconSize: 20,
@@ -291,7 +271,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
                       }).toList(),
                       onChanged: (salutation) {
                         setState(() {
-                          type = salutation;
+                          type = salutation!;
                         });
                       },
                       //value: dropdownProject,
@@ -362,7 +342,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
                   const SizedBox(
                     height: 7,
                   ),
-                  text('Companyt name'),
+                  text('Company name'),
                   const SizedBox(
                     height: 5,
                   ),
@@ -500,16 +480,42 @@ class _CreateFDFMState extends State<CreateFDFM> {
                   ),
                   GestureDetector(
                     onTap: () {
-
-                      createFDFM(staffCode, mobileController.text, startdc.text, companyt, contactPerson.text, cityCode, support, enddc.text, type);
-
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isButtonLoading = true;
+                        });
+                        createFDFM(
+                            staffCode,
+                            mobileController.text,
+                            startdc.text,
+                            companyt,
+                            contactPerson.text,
+                            cityCode,
+                            support,
+                            enddc.text,
+                            type);
+                      }
                       // Navigator.push(
                       //     context,
                       //     MaterialPageRoute(
                       //         builder: (context) => const Dashboard()));
 
                     },
-                    child: Container(
+                    child: isButtonLoading ?
+                    Container(
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 1.0,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color.fromARGB(255, 16, 36, 53),
+                      ),
+                      height: 45,
+                    ):
+                    Container(
                       child: const Center(
                         child: Text(
                           'Save',
@@ -582,7 +588,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
           ]),
     );
   }
-
+ var mobile;
   getCityList() async{
 
    // var cityRes=h
@@ -621,6 +627,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
         roleCode=array['ROLE'];
         setState(() {
           mobileController.text=array['EMPL_MOBILE_NO'];
+          mobile=array['EMPL_MOBILE_NO'];
         });
 
         getSupportList(roleCode);
@@ -753,7 +760,7 @@ class _CreateFDFMState extends State<CreateFDFM> {
     var jsondecode=jsonDecode(parseRes);
    var createFdfmStatus= jsondecode["boolean"];
 
-  if(createFdfmStatus=="true"){
+  if(createFdfmStatus == "true"){
   var list=[];
 
   // list.add(staffID);list.add(mobile);list.add(planDate);list.add(client);list.add(dsp);list.add(city);
@@ -769,7 +776,8 @@ class _CreateFDFMState extends State<CreateFDFM> {
   var bodyStr=json.encode(list);
 
   await UserSecureStorage().setBodyHeader(bodyStr);
-
+  await UserSecureStorage().setfdfmcreate("CreateFdfm");
+  Fluttertoast.showToast(msg: "FDFM created successfully");
   setState(() {
     Navigator.pop(context,true);
   });

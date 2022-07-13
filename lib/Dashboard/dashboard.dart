@@ -29,7 +29,9 @@ import '../Menu/event.dart';
 import '../Network/api.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({
+  String user;
+   Dashboard({
+    required this.user,
     Key? key,
   }) : super(key: key);
 
@@ -57,23 +59,25 @@ class _DashboardState extends State<Dashboard> {
   Future getStaffCode() async {
 
     // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // setState(() async {
+     setState(() async {
       staffCode= await UserSecureStorage().getStaffId();
-
-    // });
-    print("staff id -----> $staffCode");
-
+      staffuser= await UserSecureStorage().getuser();
+     });
+    print("staff id -----> $staffuser");
 
   }
-
+  var createfdfm;
   var fdfmData;
+  var staffuser;
   getViewFDFM() async{
 
-    String fdfmData1=await UserSecureStorage().getBodyHeader();
 
-    fdfmData=jsonDecode(fdfmData1);
+     String fdfmData1=await UserSecureStorage().getBodyHeader();
+     String createfdfm=await UserSecureStorage().getfdfmcreate();
 
-    print("fdfm data is $fdfmData");
+     fdfmData=jsonDecode(fdfmData1);
+     print("fdfm data is $fdfmData");
+
 
 
   }
@@ -85,6 +89,7 @@ class _DashboardState extends State<Dashboard> {
     getStaffCode();
     getViewFDFM();
   }
+  bool isLoading = false;
 
 
 
@@ -95,10 +100,12 @@ class _DashboardState extends State<Dashboard> {
         elevation: 0,
         backgroundColor: Colors.white,
         centerTitle: false,
-        title: const FittedBox(
-          child: Text(
-            'Hi User!',
-            style: TextStyle(
+        title:  FittedBox(
+          child:
+
+          Text(
+            'Hi ${widget.user}',
+            style: const TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w700,
                 color: Color.fromARGB(255, 10, 10, 10)),
@@ -109,64 +116,12 @@ class _DashboardState extends State<Dashboard> {
 
           GestureDetector(
             onTap: () {
-              if(fdfmData!=null) {
+
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => ViewFDFM()
                 ));
-              }
-              else{
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Center(
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0)),
-                          elevation: 10,
-                          child: SizedBox(
-                              height: 120,
-                              width: 300,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children:  [
-                                    const Text(
-                                      "Create Atleast one FDFM to View FDFM",
-                                      style: TextStyle(color: Colors.blue),
-                                    ),
+              },
 
-                                    Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          TextButton(
-                                              onPressed: () async {
-
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text(
-                                                "Ok",
-                                                style: TextStyle(
-                                                    color: Colors.black87),
-                                              )),
-
-                                        ],
-                                      ),
-                                    ),
-
-
-                                  ],
-                                ),
-                              )),
-                        ),
-                      );
-                    });
-              }
-            },
             child: Padding(
               padding: const EdgeInsets.only(top: 2),
               child:
@@ -176,11 +131,12 @@ class _DashboardState extends State<Dashboard> {
                 scale: 1.3,
                 width:20,
                 height: 50,
-                color: Colors.blueAccent,
+                // color: Colors.blueAccent,
               ),
             ),
           ),
           const  SizedBox(width: 10,),
+
           GestureDetector(
             onTap: () {
               showDialog(
@@ -205,9 +161,11 @@ class _DashboardState extends State<Dashboard> {
                                     "Confirmation",
                                     style: TextStyle(color: Colors.blue),
                                   ),
+
                                   const Text(
-                                    "Are you sure to Download FDFM?",
+                                    "Are you Sure for Download FDFM",
                                   ),
+
                                   Center(
                                     child: Row(
                                       mainAxisAlignment:
@@ -1047,9 +1005,32 @@ class _DashboardState extends State<Dashboard> {
         }
     );
 
+ var listcount;
     var bodyIs=res.body;
     var statusCode=res.statusCode;
-    if(statusCode==200){
+    if(statusCode == 200){
+      //print(res.body);
+      Xml2Json xml2Json=Xml2Json();
+
+      xml2Json.parse(bodyIs);
+      var jsonString = xml2Json.toParker();
+
+      //print("xml2Json is ${jsonString}");
+
+      var data = jsonDecode(jsonString);
+
+      var report=data['DataSet'];
+
+      var diff=report['diffgr:diffgram'];
+
+      var newdata =diff['NewDataSet'];
+
+     // var reportIs=jsonDecode(newdata);
+      //print("xml2Json is ${reportIs}");
+      setState(() {
+        listcount = newdata['Table1'];
+        print('arrey > ${listcount.length}');
+      });
 
       showDialog(
           context: context,
@@ -1069,8 +1050,8 @@ class _DashboardState extends State<Dashboard> {
                         MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "FDFM Downloaded Successfully",
+                           Text(
+                            "${listcount.length} record Downloaded Successfully",
                             style: TextStyle(color: Colors.blue),
                           ),
 
@@ -1099,21 +1080,9 @@ class _DashboardState extends State<Dashboard> {
               ),
             );
           });
-
-
-
     }
 
     else{
-
     }
-
-
-
-
-
-
   }
-
-
 }

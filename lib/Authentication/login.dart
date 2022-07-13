@@ -21,6 +21,7 @@ class _LoginState extends State<Login> {
   final _empIdController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
+  bool _isObscure = true;
 
   Future<void> login(String user, String pass) async {
     _loginUserHttp(user,pass);
@@ -29,6 +30,9 @@ class _LoginState extends State<Login> {
 
 
   _loginUserHttp(String user, String pass) async {
+    setState((){
+      isLoading = true;
+    });
     print("user is $user, pass is $pass");
    var res= await http.post(Uri.parse(API.loginURL),headers: {
       "Accept": "application/json",
@@ -41,36 +45,30 @@ class _LoginState extends State<Login> {
       "_Location":"110001"
    }
     );
-
    var bodyIs=res.body;
    var statusCode=res.statusCode;
    if(statusCode==200){
-
+     setState((){
+       isLoading = false;
+     });
      print("res is ${res.body}");
-
      Xml2Json xml2Json=Xml2Json();
-
      xml2Json.parse(bodyIs);
      var jsonString = xml2Json.toParker();
-
      print("xml2Json is ${jsonString}");
-
      var data = jsonDecode(jsonString);
      var staffId=data['string'];
      print("data is ${data['string']}");
-
-
      await UserSecureStorage().setStaffId(staffId);
-
-
+     await UserSecureStorage().setuser(user);
      Navigator.of(context).pushReplacement(MaterialPageRoute(
-         builder: (BuildContext context) => const Dashboard()));
-
-
+         builder: (BuildContext context) => Dashboard(user: user)));
    }
 
    else{
-
+     setState((){
+       isLoading = false;
+     });
    }
 
 
@@ -150,8 +148,24 @@ class _LoginState extends State<Login> {
                                   isDense: true,
                                   contentPadding: EdgeInsets.all(15.0),
                                   labelText: 'Password',
-                                  border: OutlineInputBorder()),
-                              keyboardType: TextInputType.text,
+                                  border: OutlineInputBorder(),
+                                // suffixIcon: IconButton(
+                                //   icon: Icon(
+                                //     _isObscure
+                                //         ? Icons.visibility_off
+                                //         : Icons.visibility,
+                                //   ),
+                                //   onPressed: () {
+                                //     setState(() {
+                                //       _isObscure = !_isObscure;
+                                //     });
+                                //   },
+                                // ),
+                              ),
+                              keyboardType: TextInputType.visiblePassword,
+                              obscureText: _isObscure,
+                              enableSuggestions: false,
+                              autocorrect: false,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return 'The field is mandatory';
@@ -179,6 +193,10 @@ class _LoginState extends State<Login> {
                             const SizedBox(
                               height: 40,
                             ),
+                            isLoading ? const SizedBox(
+                                height: 40,
+                                width: 40,
+                                child:  CircularProgressIndicator()):
                             GestureDetector(
                               onTap: () {
                                 // Navigator.of(context).pushReplacement(MaterialPageRoute(

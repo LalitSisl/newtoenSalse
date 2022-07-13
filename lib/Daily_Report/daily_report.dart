@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:salesapp/Daily_Report/camera.dart';
 import 'package:salesapp/Daily_Report/collections.dart';
 import 'package:salesapp/Daily_Report/competitor.dart';
 import 'package:salesapp/Daily_Report/complaint.dart';
@@ -84,7 +85,7 @@ class _DailyReportState extends State<DailyReport> {
                   child: frame('Follow-Up',"https://img.icons8.com/office/2x/sort-by-follow-up-date.png")),
               GestureDetector(
                   onTap: (){
-                   // Navigator.push(context, MaterialPageRoute(builder: (context) => Order()));
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => Camera()));
                   },
                   child: frame('Camera',"https://img.icons8.com/clouds/2x/apple-camera.png")),
               GestureDetector(

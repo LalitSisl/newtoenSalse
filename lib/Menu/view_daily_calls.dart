@@ -1,72 +1,37 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:salesapp/Models/complaint_view_model.dart';
-import 'package:xml2json/xml2json.dart';
+import 'package:salesapp/utils/secure_storage.dart';
 
-import '../Network/api.dart';
-import '../utils/secure_storage.dart';
-class ComplaintView extends StatefulWidget {
-  const ComplaintView({Key? key}) : super(key: key);
+import '../Models/daily_calls_model.dart';
+
+class ViewDailyCalls extends StatefulWidget {
+  const ViewDailyCalls({Key? key}) : super(key: key);
 
   @override
-  State<ComplaintView> createState() => _ComplaintViewState();
+  State<ViewDailyCalls> createState() => _ViewDailyCallsState();
 }
 
-class _ComplaintViewState extends State<ComplaintView> {
-
+class _ViewDailyCallsState extends State<ViewDailyCalls> {
   bool isLoading = true;
-  List<ComplaintViewModel> complaintList = <ComplaintViewModel>[];
+  DailyCallsModel dailyCallsModel = DailyCallsModel();
 
-  _getComplaint() async {
-    var staffId = await UserSecureStorage().getStaffId();
-    var res= await http.post(Uri.parse(API.Ws_Complaint_Detail_View),headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-        body: {
-          '_StaffID':"$staffId",
-          '_VisitCode':'101',
-          '_TenantCode': '01',
-          '_Location': '110001'
-        }
-    );
-
-    var bodyIs=res.body;
-    var statusCode=res.statusCode;
-    if(statusCode==200){
-
-      print("res is ${res.body}");
-
-      Xml2Json xml2Json=Xml2Json();
-
-      xml2Json.parse(bodyIs);
-      var jsonString = xml2Json.toParker();
-      var data = jsonDecode(jsonString);
-      var complaintObject=data['string'];
-      complaintObject = complaintObject.toString().replaceAll("\\r\\\\n", "\n");
-      var object = json.decode(complaintObject.toString());
-      setState(() {
-        object['EventSummary'].forEach((v) {
-          complaintList.add(ComplaintViewModel.fromJson(v));
-        });
-        // product = productList[0];
-        isLoading = false;
-      });
-    }
-    else{
-      setState(() {
-        isLoading = false;
-      });
-    }
+  Future<void> getDailyCalls() async {
+    var dailyCalls = await UserSecureStorage().getDailyCalls();
+    print("$dailyCalls");
+    print("${jsonDecode(dailyCalls)}");
+    // var body = jsonDecode(dailyCalls);
+    setState(() {
+      dailyCallsModel = DailyCallsModel.fromJson(dailyCalls);
+      print("${dailyCallsModel}");
+    });
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getComplaint();
+    getDailyCalls();
   }
 
   @override
@@ -85,7 +50,7 @@ class _ComplaintViewState extends State<ComplaintView> {
           ),
         ),
         title: const Text(
-          'Complaint View',
+          'Daily Calls View',
           style:
           TextStyle(fontSize: 18, color: Color.fromARGB(255, 20, 20, 20)),
         ),
@@ -100,7 +65,7 @@ class _ComplaintViewState extends State<ComplaintView> {
         ),
       )
           : ListView.builder(
-          itemCount: complaintList.isNotEmpty ? complaintList.length : 0,
+          itemCount: 1,
           itemBuilder: (context, index) {
             return Card(
               color: const Color.fromARGB(255, 166, 207, 240),
@@ -116,10 +81,10 @@ class _ComplaintViewState extends State<ComplaintView> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Party Code:')),
+                            child: text('Date:')),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: text(complaintList[index].partyCode != null ? '${complaintList[index].partyCode}' : '--')),
+                            child: text(dailyCallsModel.date != null ? '${dailyCallsModel.date}' : '--')),
                       ],
                     ),
                     const SizedBox(
@@ -130,10 +95,10 @@ class _ComplaintViewState extends State<ComplaintView> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Party:')),
+                            child: text('Sub Area:')),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.5,
-                            child: text(complaintList[index].party != null ? '${complaintList[index].party}' : '--')
+                            child: text(dailyCallsModel.subArea != null ? '${dailyCallsModel.subArea}' : '--')
                         ),
                       ],
                     ),
@@ -145,12 +110,12 @@ class _ComplaintViewState extends State<ComplaintView> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Product:')),
+                            child: text('Category:')),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: text(
-                              complaintList[index].productCategory != null ?
-                              '${complaintList[index].productCategory}' : '--'),
+                              dailyCallsModel.category != null ?
+                              '${dailyCallsModel.category}' : '--'),
                         ),
                       ],
                     ),
@@ -162,12 +127,12 @@ class _ComplaintViewState extends State<ComplaintView> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Complaint Type:')),
+                            child: text('Calls Made:')),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: text(
-                              complaintList[index].complainntType != null ?
-                              '${complaintList[index].complainntType}' : '--'),
+                              dailyCallsModel.callsMade != null ?
+                              '${dailyCallsModel.callsMade}' : '--'),
                         ),
                       ],
                     ),
@@ -179,12 +144,46 @@ class _ComplaintViewState extends State<ComplaintView> {
                       children: [
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.3,
-                            child: text('Remarks:')),
+                            child: text('Eff. Calls:')),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: text(
-                              complaintList[index].remarks != null ?
-                              '${complaintList[index].remarks}' : '--'),
+                              dailyCallsModel.executiveCalls != null ?
+                              '${dailyCallsModel.executiveCalls}' : '--'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            child: text('Quantity:')),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: text(
+                              dailyCallsModel.qty != null ?
+                              '${dailyCallsModel.qty}' : '--'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            child: text('Amount:')),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: text(
+                              dailyCallsModel.amount != null ?
+                              '${dailyCallsModel.amount}' : '--'),
                         ),
                       ],
                     ),
@@ -197,10 +196,20 @@ class _ComplaintViewState extends State<ComplaintView> {
     );
   }
 
-  Widget text(String text) {
-    return Text(
-      text,
-      style: TextStyle(),
+  Widget text(String value) {
+    return RichText(
+      text: TextSpan(
+          text: value,
+          style: const TextStyle(
+            color: Colors.black,
+          ),
+          children: const [
+            TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                ))
+          ]),
     );
   }
 }
